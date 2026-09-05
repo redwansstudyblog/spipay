@@ -10,6 +10,17 @@ Free, open-source auto payment verification system — a self-hosted alternative
 4. An Android app on the merchant's phone listens for the official SMS and forwards it to `sms-ingest`.
 5. Whichever of steps 3/4 happens second completes the match (amount + provider + TrxID), marks the order `verified`, and fires a signed webhook to the merchant's site.
 
+## Supported payment methods
+
+Mobile wallet MFS only, via SMS verification: bKash, Nagad, Rocket, Upay,
+Tap, CellFin, SureCash, OK Wallet, mCash, Meghna Pay.
+
+Cards and net/internet banking are intentionally **not** supported — they
+need a licensed payment gateway/aggregator relationship (PCI-DSS,
+bank agreements), which is a different business than this project. The
+plan is to route those through an existing licensed gateway partner
+later rather than build card processing in-house.
+
 ## Structure
 
 ```
@@ -22,6 +33,9 @@ supabase/
     payment-status/            -- checkout page polls order status
 checkout/
   index.html            -- hosted checkout page (provider select, TrxID submit, live status)
+android/
+  SpidPay Agent          -- Android Studio project, the SMS-listener companion app
+                             (see android/README.md for build + setup steps)
 ```
 
 ## Security

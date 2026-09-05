@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SpidPayAgent" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#0F6E5C</item>
+        <item name="colorPrimaryVariant">#0B5647</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
+</resources>

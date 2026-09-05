@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SpidPay Agent"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="24dp"
+            android:text="এই ফোনে আসা mobile banking SMS পড়ে আপনার SpidPay ব্যাকএন্ডে পাঠায়"
+            android:textColor="#667074" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="API Base URL"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/inputApiBase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="https://your-project.supabase.co/functions/v1"
+            android:inputType="textUri" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Merchant API Key"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/inputApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="merchants.api_key" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Webhook Secret"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/inputWebhookSecret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="merchants.webhook_secret"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="সেভ করুন" />
+
+        <Button
+            android:id="@+id/btnRequestPermission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="SMS পড়ার অনুমতি দিন" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="⚠️ এই ফোন/সিম শুধু পেমেন্ট SMS receive করার জন্য আলাদা রাখা ভালো, ব্যক্তিগত ব্যবহারের ফোনে না রাখাই নিরাপদ।"
+            android:textColor="#B3413B"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+</ScrollView>

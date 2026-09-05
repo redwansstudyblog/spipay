@@ -25,10 +25,21 @@ async function hmacHex(secret: string, message: string) {
   return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+// NOTE: these sender-id allowlists are best-effort starting points.
+// Each one should be confirmed against a real SMS from that provider
+// before relying on it for actual verification — sender names/short
+// codes can vary or change over time.
 const OFFICIAL_SENDERS: Record<string, string[]> = {
   bkash: ["bkash", "16247"],
   nagad: ["nagad", "16167"],
   rocket: ["rocket", "dbbl", "16216"],
+  upay: ["upay"],
+  tap: ["tap"],
+  cellfin: ["cellfin", "islami bank", "ibbl"],
+  surecash: ["surecash"],
+  okwallet: ["ok wallet", "okwallet"],
+  mcash: ["mcash", "mercantile"],
+  meghnapay: ["meghna"],
 };
 
 function parseSms(raw: string) {

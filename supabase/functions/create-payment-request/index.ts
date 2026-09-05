@@ -6,6 +6,8 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
+const PROVIDERS = ["bkash", "nagad", "rocket", "upay", "tap", "cellfin", "surecash", "okwallet", "mcash", "meghnapay"];
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -34,8 +36,8 @@ Deno.serve(async (req: Request) => {
   if (!order_reference || !amount || !provider) {
     return json({ error: "order_reference, amount, and provider are required" }, 400);
   }
-  if (!["bkash", "nagad", "rocket"].includes(provider)) {
-    return json({ error: "provider must be bkash, nagad, or rocket" }, 400);
+  if (!PROVIDERS.includes(provider)) {
+    return json({ error: `provider must be one of: ${PROVIDERS.join(", ")}` }, 400);
   }
 
   const { data: number, error: numberErr } = await supabase

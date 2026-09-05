@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>পেমেন্ট সম্পন্ন করুন</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAFAF8;
+    --ink: #12181B;
+    --ink-soft: #5B6568;
+    --line: #E4E2DC;
+    --accent: #0F6E5C;
+    --accent-soft: #E4F0EC;
+    --danger: #B3413B;
+    --danger-soft: #F6E9E8;
+    --card-radius: 18px;
+    --bkash: #E2136E;
+    --nagad: #F7941D;
+    --rocket: #8C3494;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 60px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .merchant-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .merchant-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .merchant-name {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .amount-block {
+    margin-bottom: 26px;
+  }
+
+  .amount-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 6px;
+  }
+
+  .amount {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .order-ref {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 8px 0 0;
+  }
+
+  .provider-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .provider-btn {
+    border: 1.5px solid var(--line);
+    background: #fff;
+    border-radius: 12px;
+    padding: 11px 6px;
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.15s ease;
+  }
+
+  .provider-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .provider-btn[data-p="bkash"] .provider-dot { background: var(--bkash); }
+  .provider-btn[data-p="nagad"] .provider-dot { background: var(--nagad); }
+  .provider-btn[data-p="rocket"] .provider-dot { background: var(--rocket); }
+
+  .provider-btn.active {
+    border-color: var(--ink);
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .step {
+    display: flex;
+    gap: 12px;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-body { padding-top: 1px; }
+
+  .step-title {
+    font-size: 14.5px;
+    margin: 0 0 4px;
+  }
+
+  .number-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-soft);
+    border-radius: 10px;
+    padding: 9px 10px 9px 13px;
+    margin-top: 6px;
+  }
+
+  .number-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    flex: 1;
+  }
+
+  .copy-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 7px;
+  }
+
+  .copy-btn:active { background: rgba(15,110,92,0.12); }
+
+  .field-label {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 11px;
+    border: 1.5px solid var(--line);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    background: #fff;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 15.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .status-box {
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 13px 14px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .status-box.show { display: flex; }
+  .status-box.waiting { background: #F1F0EC; color: var(--ink-soft); }
+  .status-box.verified { background: var(--accent-soft); color: var(--accent); }
+  .status-box.failed { background: var(--danger-soft); color: var(--danger); }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-top-color: var(--ink-soft);
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footnote {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 22px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="merchant-row">
+    <div class="merchant-badge">অ</div>
+    <span class="merchant-name">অর্ণব বুকস থেকে পেমেন্ট</span>
+  </div>
+
+  <div class="amount-block">
+    <p class="amount-label">পরিশোধ করতে হবে</p>
+    <p class="amount">৳500.00</p>
+    <p class="order-ref">অর্ডার #ORD-1042</p>
+  </div>
+
+  <div class="provider-row">
+    <button class="provider-btn active" data-p="bkash" onclick="selectProvider('bkash', this)">
+      <span class="provider-dot"></span>bKash
+    </button>
+    <button class="provider-btn" data-p="nagad" onclick="selectProvider('nagad', this)">
+      <span class="provider-dot"></span>Nagad
+    </button>
+    <button class="provider-btn" data-p="rocket" onclick="selectProvider('rocket', this)">
+      <span class="provider-dot"></span>Rocket
+    </button>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p class="step-title">এই নম্বরে <b>Send Money</b> করুন</p>
+        <div class="number-row">
+          <span class="number-text" id="payNumber">01712-345678</span>
+          <button class="copy-btn" onclick="copyNumber()" id="copyBtn">কপি</button>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p class="step-title">টাকা পাঠানোর পর যে TrxID পাবেন সেটা নিচে লিখুন</p>
+      </div>
+    </div>
+  </div>
+
+  <label class="field-label" for="trxid">Transaction ID</label>
+  <input type="text" id="trxid" placeholder="যেমন CGH4K7P9Q2" autocomplete="off">
+
+  <button class="submit-btn" id="submitBtn" onclick="submitTrx()">পেমেন্ট নিশ্চিত করুন</button>
+
+  <div class="status-box" id="statusBox"></div>
+
+  <p class="footnote">২০ মিনিটের মধ্যে TrxID না দিলে এই পেমেন্ট রিকোয়েস্ট মেয়াদোত্তীর্ণ হয়ে যাবে</p>
+</div>
+
+<script>
+  const numbers = {
+    bkash: '01712-345678',
+    nagad: '01812-345678',
+    rocket: '01912-345678'
+  };
+
+  function selectProvider(p, el) {
+    document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('payNumber').textContent = numbers[p];
+  }
+
+  function copyNumber() {
+    const num = document.getElementById('payNumber').textContent.replace('-', '');
+    navigator.clipboard.writeText(num).catch(() => {});
+    const btn = document.getElementById('copyBtn');
+    const old = btn.textContent;
+    btn.textContent = 'কপি হয়েছে';
+    setTimeout(() => { btn.textContent = old; }, 1500);
+  }
+
+  function submitTrx() {
+    const val = document.getElementById('trxid').value.trim();
+    const box = document.getElementById('statusBox');
+    const btn = document.getElementById('submitBtn');
+    if (!val) return;
+
+    btn.disabled = true;
+    box.className = 'status-box show waiting';
+    box.innerHTML = '<span class="spinner"></span><span>SMS-এর সাথে মিলিয়ে দেখা হচ্ছে...</span>';
+
+    setTimeout(() => {
+      const ok = val.length >= 6;
+      if (ok) {
+        box.className = 'status-box show verified';
+        box.innerHTML = '&#10003;&nbsp; পেমেন্ট ভেরিফাই হয়েছে, অর্ডার নিশ্চিত';
+      } else {
+        box.className = 'status-box show failed';
+        box.innerHTML = '&#10005;&nbsp; মিলছে না — TrxID আবার চেক করে দিন';
+        btn.disabled = false;
+      }
+    }, 1600);
+  }
+</script>
+
+</body>
+</html>

@@ -1,8 +1,8 @@
-# SpidPay Agent (Android)
+# spipay Agent (Android)
 
 This is the SMS-listener companion app. It runs on the merchant's dedicated
 Android phone, watches for official mobile-banking SMS, and forwards
-matching ones to the SpidPay backend's `sms-ingest` endpoint.
+matching ones to the spipay backend's `sms-ingest` endpoint.
 
 ## What it does
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#FAFAF8</color>
+    <color name="card">#FFFFFF</color>
+    <color name="ink">#11181B</color>
+    <color name="ink_soft">#667074</color>
+    <color name="line">#E7E5DF</color>
+    <color name="accent">#0F6E5C</color>
+    <color name="accent_soft">#E4F0EC</color>
+    <color name="danger">#B3413B</color>
+    <color name="danger_soft">#F7EAE9</color>
+    <color name="warn">#B3781F</color>
+    <color name="warn_soft">#FBF1E1</color>
+</resources>

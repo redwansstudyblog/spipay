@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SpidPay Dashboard</title>
+<title>spipay Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -70,7 +70,7 @@
 <body>
 
 <div class="wrap">
-  <h1>SpidPay Dashboard</h1>
+  <h1>spipay Dashboard</h1>
   <p class="sub">তোমার merchant অ্যাকাউন্ট ম্যানেজ করো</p>
 
   <!-- AUTH VIEW -->
@@ -93,7 +93,7 @@
       <label for="businessName">ব্যবসার নাম</label>
       <input type="text" id="businessName" placeholder="Arnab Books">
       <label for="webhookUrl">Webhook URL</label>
-      <input type="text" id="webhookUrl" placeholder="https://yoursite.com/api/spidpay-webhook">
+      <input type="text" id="webhookUrl" placeholder="https://yoursite.com/api/spipay-webhook">
       <button class="btn-primary" id="saveProfileBtn">সেভ করো</button>
       <div id="profileMsg"></div>
     </div>
@@ -158,7 +158,7 @@
   const SUPABASE_URL = "https://nihvxjmshnzxzffnrdst.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5paHZ4am1zaG56eHpmZm5yZHN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDI0NjEsImV4cCI6MjEwNDExODQ2MX0.CJJZBxUxWOyb8JXI1MaIkLWFldLWbuzVAEqgUDS6zxs";
   const API_BASE = "https://nihvxjmshnzxzffnrdst.supabase.co/functions/v1";
-  const CHECKOUT_URL = "https://redwansstudyblog.github.io/Spidpay/checkout/"; // update once GitHub Pages / real hosting is set up
+  const CHECKOUT_URL = "https://redwansstudyblog.github.io/spipay/checkout/"; // update once GitHub Pages / real hosting is set up
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

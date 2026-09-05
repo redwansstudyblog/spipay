@@ -1,4 +1,4 @@
-# Spidpay
+# spipay
 
 Free, open-source auto payment verification system — a self-hosted alternative to SSLCommerz for bKash, Nagad, and Rocket.
 
@@ -34,7 +34,7 @@ supabase/
 checkout/
   index.html            -- hosted checkout page (provider select, TrxID submit, live status)
 android/
-  SpidPay Agent          -- Android Studio project, the SMS-listener companion app
+  spipay Agent          -- Android Studio project, the SMS-listener companion app
                              (see android/README.md for build + setup steps)
 dashboard/
   index.html             -- merchant self-service dashboard (signup/login,
@@ -56,7 +56,7 @@ each merchant only ever sees their own numbers, API key, and transactions.
 - Matching requires TrxID + amount + provider to agree (not amount alone)
 - TrxID is unique per merchant — a used TrxID can't be replayed
 - Orders expire after 20 minutes
-- Outgoing webhooks to the merchant are HMAC-signed so the merchant's site can verify they came from Spidpay
+- Outgoing webhooks to the merchant are HMAC-signed so the merchant's site can verify they came from spipay
 
 ## Status
 

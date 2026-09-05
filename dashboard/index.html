@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpidPay Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --paper: #FAFAF8; --card: #FFFFFF; --ink: #11181B; --ink-soft: #667074;
+    --line: #E7E5DF; --accent: #0F6E5C; --accent-soft: #E4F0EC;
+    --danger: #B3413B; --danger-soft: #F7EAE9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Noto Sans Bengali', 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 32px 18px 60px; }
+  h1 { font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 800; margin: 0 0 4px; }
+  .sub { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 26px; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .card h2 { font-size: 15px; margin: 0 0 14px; }
+
+  label { font-size: 13px; color: var(--ink-soft); display: block; margin: 12px 0 6px; }
+  input, select {
+    width: 100%; padding: 11px 12px; border-radius: 10px; border: 1.5px solid var(--line);
+    font-family: 'Inter', sans-serif; font-size: 14.5px; background: #fff; color: var(--ink);
+  }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+
+  button {
+    font-family: 'Noto Sans Bengali', sans-serif; font-weight: 600; font-size: 14.5px;
+    border-radius: 10px; border: none; padding: 12px 16px; cursor: pointer;
+  }
+  .btn-primary { background: var(--ink); color: #fff; width: 100%; margin-top: 14px; }
+  .btn-secondary { background: var(--accent-soft); color: var(--accent); }
+  .btn-link { background: none; color: var(--accent); padding: 4px; font-size: 13px; }
+
+  .field-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .mono { font-family: 'Inter', sans-serif; font-size: 13.5px; word-break: break-all; }
+  .secret-row { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .secret-label { font-size: 11.5px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px; }
+
+  .number-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .number-row:last-child { border-bottom: none; }
+  .provider-tag { font-size: 11.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 3px 8px; border-radius: 999px; margin-right: 8px; }
+
+  .status-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .status-verified { background: var(--accent-soft); color: var(--accent); }
+  .status-pending { background: #F1F0EC; color: var(--ink-soft); }
+  .status-expired, .status-mismatch { background: var(--danger-soft); color: var(--danger); }
+
+  .tx-row { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .tx-row:last-child { border-bottom: none; }
+  .tx-top { display: flex; justify-content: space-between; font-size: 14px; }
+  .tx-meta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+
+  .msg { font-size: 13px; padding: 10px 12px; border-radius: 10px; margin-top: 10px; }
+  .msg.error { background: var(--danger-soft); color: var(--danger); }
+  .msg.ok { background: var(--accent-soft); color: var(--accent); }
+
+  .hidden { display: none; }
+  .empty { color: var(--ink-soft); font-size: 13px; padding: 8px 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>SpidPay Dashboard</h1>
+  <p class="sub">তোমার merchant অ্যাকাউন্ট ম্যানেজ করো</p>
+
+  <!-- AUTH VIEW -->
+  <div id="authView" class="card">
+    <h2 id="authTitle">লগইন করো</h2>
+    <label for="authEmail">Email</label>
+    <input type="email" id="authEmail" placeholder="you@example.com">
+    <label for="authPassword">Password</label>
+    <input type="password" id="authPassword" placeholder="••••••••">
+    <button class="btn-primary" id="authSubmitBtn">লগইন করো</button>
+    <button class="btn-link" id="authToggleBtn" style="margin-top:10px;">অ্যাকাউন্ট নেই? সাইন আপ করো</button>
+    <div id="authMsg"></div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="dashView" class="hidden">
+
+    <div class="card">
+      <h2>ব্যবসার তথ্য</h2>
+      <label for="businessName">ব্যবসার নাম</label>
+      <input type="text" id="businessName" placeholder="Arnab Books">
+      <label for="webhookUrl">Webhook URL</label>
+      <input type="text" id="webhookUrl" placeholder="https://yoursite.com/api/spidpay-webhook">
+      <button class="btn-primary" id="saveProfileBtn">সেভ করো</button>
+      <div id="profileMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>API ক্রেডেনশিয়াল</h2>
+      <p class="sub" style="margin-bottom:12px;">এগুলো তোমার ওয়েবসাইট আর Android app-এ বসাতে হবে — কারো সাথে শেয়ার করো না</p>
+      <div class="secret-row">
+        <div class="secret-label">API Key</div>
+        <div class="mono" id="apiKeyDisplay">••••••••••••••••</div>
+      </div>
+      <div class="secret-row">
+        <div class="secret-label">Webhook Secret</div>
+        <div class="mono" id="webhookSecretDisplay">••••••••••••••••</div>
+      </div>
+      <button class="btn-secondary" id="revealBtn">দেখাও</button>
+    </div>
+
+    <div class="card">
+      <h2>মোবাইল ওয়ালেট নম্বর</h2>
+      <div id="numbersList"><p class="empty">এখনো কোনো নম্বর যোগ করা হয়নি</p></div>
+      <label for="numberProvider">Provider</label>
+      <select id="numberProvider">
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+        <option value="rocket">Rocket</option>
+        <option value="upay">Upay</option>
+        <option value="tap">Tap</option>
+        <option value="cellfin">CellFin</option>
+        <option value="surecash">SureCash</option>
+        <option value="okwallet">OK Wallet</option>
+        <option value="mcash">mCash</option>
+        <option value="meghnapay">Meghna Pay</option>
+      </select>
+      <label for="numberPhone">নম্বর</label>
+      <input type="text" id="numberPhone" placeholder="01712345678">
+      <button class="btn-primary" id="addNumberBtn">নম্বর যোগ করো</button>
+      <div id="numberMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>টেস্ট পেমেন্ট</h2>
+      <p class="sub" style="margin-bottom:12px;">নিজের সেটআপ ঠিক আছে কিনা যাচাই করতে একটা টেস্ট চেকআউট লিংক বানাও</p>
+      <label for="testProvider">Provider</label>
+      <select id="testProvider"></select>
+      <label for="testAmount">Amount (৳)</label>
+      <input type="text" id="testAmount" value="10.00">
+      <button class="btn-primary" id="createTestBtn">টেস্ট লিংক বানাও</button>
+      <div id="testMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>সাম্প্রতিক লেনদেন</h2>
+      <div id="txList"><p class="empty">এখনো কোনো লেনদেন নেই</p></div>
+    </div>
+
+    <button class="btn-link" id="logoutBtn">লগআউট</button>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://nihvxjmshnzxzffnrdst.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5paHZ4am1zaG56eHpmZm5yZHN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDI0NjEsImV4cCI6MjEwNDExODQ2MX0.CJJZBxUxWOyb8JXI1MaIkLWFldLWbuzVAEqgUDS6zxs";
+  const API_BASE = "https://nihvxjmshnzxzffnrdst.supabase.co/functions/v1";
+  const CHECKOUT_URL = "https://redwansstudyblog.github.io/Spidpay/checkout/"; // update once GitHub Pages / real hosting is set up
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let isSignup = false;
+  let merchant = null;
+
+  const el = (id) => document.getElementById(id);
+
+  el("authToggleBtn").addEventListener("click", () => {
+    isSignup = !isSignup;
+    el("authTitle").textContent = isSignup ? "সাইন আপ করো" : "লগইন করো";
+    el("authSubmitBtn").textContent = isSignup ? "সাইন আপ করো" : "লগইন করো";
+    el("authToggleBtn").textContent = isSignup ? "অ্যাকাউন্ট আছে? লগইন করো" : "অ্যাকাউন্ট নেই? সাইন আপ করো";
+  });
+
+  el("authSubmitBtn").addEventListener("click", async () => {
+    const email = el("authEmail").value.trim();
+    const password = el("authPassword").value;
+    if (!email || password.length < 6) {
+      showMsg("authMsg", "সঠিক ইমেইল দাও, পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার", "error");
+      return;
+    }
+
+    const { error } = isSignup
+      ? await sb.auth.signUp({ email, password })
+      : await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showMsg("authMsg", error.message, "error");
+      return;
+    }
+
+    if (isSignup) {
+      showMsg("authMsg", "সাইন আপ হয়েছে, এখন লগইন করো", "ok");
+      isSignup = false;
+      el("authTitle").textContent = "লগইন করো";
+      el("authSubmitBtn").textContent = "লগইন করো";
+      return;
+    }
+
+    await loadDashboard();
+  });
+
+  el("logoutBtn").addEventListener("click", async () => {
+    await sb.auth.signOut();
+    location.reload();
+  });
+
+  function showMsg(elId, text, kind) {
+    el(elId).innerHTML = `<div class="msg ${kind}">${text}</div>`;
+    setTimeout(() => { el(elId).innerHTML = ""; }, 4000);
+  }
+
+  async function loadDashboard() {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) return;
+
+    const { data: m, error } = await sb.from("merchants").select("*").eq("auth_user_id", user.id).single();
+    if (error || !m) {
+      showMsg("authMsg", "মার্চেন্ট প্রোফাইল পাওয়া যায়নি, একটু পর আবার চেষ্টা করো", "error");
+      return;
+    }
+    merchant = m;
+
+    el("authView").classList.add("hidden");
+    el("dashView").classList.remove("hidden");
+
+    el("businessName").value = merchant.name || "";
+    el("webhookUrl").value = merchant.webhook_url || "";
+
+    loadNumbers();
+    loadTransactions();
+  }
+
+  el("saveProfileBtn").addEventListener("click", async () => {
+    const name = el("businessName").value.trim();
+    const webhookUrl = el("webhookUrl").value.trim();
+    const { error } = await sb.from("merchants")
+      .update({ name, webhook_url: webhookUrl || null })
+      .eq("id", merchant.id);
+    if (error) { showMsg("profileMsg", error.message, "error"); return; }
+    merchant.name = name;
+    merchant.webhook_url = webhookUrl;
+    showMsg("profileMsg", "সেভ হয়েছে", "ok");
+  });
+
+  el("revealBtn").addEventListener("click", () => {
+    const revealed = el("revealBtn").textContent === "লুকাও";
+    el("apiKeyDisplay").textContent = revealed ? "••••••••••••••••" : merchant.api_key;
+    el("webhookSecretDisplay").textContent = revealed ? "••••••••••••••••" : merchant.webhook_secret;
+    el("revealBtn").textContent = revealed ? "দেখাও" : "লুকাও";
+  });
+
+  async function loadNumbers() {
+    const { data: numbers } = await sb.from("merchant_numbers").select("*").eq("merchant_id", merchant.id);
+    const list = el("numbersList");
+    const testSelect = el("testProvider");
+
+    if (!numbers || numbers.length === 0) {
+      list.innerHTML = '<p class="empty">এখনো কোনো নম্বর যোগ করা হয়নি</p>';
+      testSelect.innerHTML = '<option value="">আগে একটা নম্বর যোগ করো</option>';
+      return;
+    }
+
+    list.innerHTML = numbers.map(n => `
+      <div class="number-row">
+        <div><span class="provider-tag">${n.provider}</span>${n.phone_number}</div>
+        <span style="color:${n.is_active ? 'var(--accent)' : 'var(--ink-soft)'}; font-size:12px;">${n.is_active ? 'সক্রিয়' : 'বন্ধ'}</span>
+      </div>
+    `).join("");
+
+    testSelect.innerHTML = numbers.filter(n => n.is_active)
+      .map(n => `<option value="${n.provider}">${n.provider} — ${n.phone_number}</option>`).join("");
+  }
+
+  el("addNumberBtn").addEventListener("click", async () => {
+    const provider = el("numberProvider").value;
+    const phone = el("numberPhone").value.trim();
+    if (!/^01[0-9]{9}$/.test(phone.replace(/[^0-9]/g, ""))) {
+      showMsg("numberMsg", "সঠিক ১১ ডিজিটের নম্বর দাও", "error");
+      return;
+    }
+    const { error } = await sb.from("merchant_numbers").insert({
+      merchant_id: merchant.id, provider, phone_number: phone,
+    });
+    if (error) { showMsg("numberMsg", error.message, "error"); return; }
+    el("numberPhone").value = "";
+    showMsg("numberMsg", "নম্বর যোগ হয়েছে", "ok");
+    loadNumbers();
+  });
+
+  el("createTestBtn").addEventListener("click", async () => {
+    const provider = el("testProvider").value;
+    const amount = parseFloat(el("testAmount").value);
+    if (!provider) { showMsg("testMsg", "আগে একটা নম্বর যোগ করো", "error"); return; }
+    if (!amount || amount <= 0) { showMsg("testMsg", "সঠিক amount দাও", "error"); return; }
+
+    try {
+      const res = await fetch(`${API_BASE}/create-payment-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": merchant.api_key },
+        body: JSON.stringify({ order_reference: "TEST-" + Date.now(), amount, provider }),
+      });
+      const data = await res.json();
+      if (!res.ok) { showMsg("testMsg", data.error || "কিছু ভুল হয়েছে", "error"); return; }
+      const link = `${CHECKOUT_URL}?id=${data.payment_request_id}`;
+      el("testMsg").innerHTML = `<div class="msg ok">লিংক রেডি: <a href="${link}" target="_blank">${link}</a></div>`;
+      loadTransactions();
+    } catch (e) {
+      showMsg("testMsg", "সার্ভারে পৌঁছানো যায়নি", "error");
+    }
+  });
+
+  async function loadTransactions() {
+    const { data: txs } = await sb.from("payment_requests")
+      .select("*").eq("merchant_id", merchant.id)
+      .order("created_at", { ascending: false }).limit(15);
+
+    const list = el("txList");
+    if (!txs || txs.length === 0) {
+      list.innerHTML = '<p class="empty">এখনো কোনো লেনদেন নেই</p>';
+      return;
+    }
+
+    const statusClass = { verified: "status-verified", pending: "status-pending", awaiting_trxid: "status-pending", expired: "status-expired", mismatch: "status-mismatch", manual_review: "status-pending" };
+    const statusLabel = { verified: "ভেরিফাইড", pending: "পেন্ডিং", awaiting_trxid: "অপেক্ষমাণ", expired: "মেয়াদোত্তীর্ণ", mismatch: "অমিল", manual_review: "রিভিউ দরকার" };
+
+    list.innerHTML = txs.map(t => `
+      <div class="tx-row">
+        <div class="tx-top">
+          <span>${t.order_reference}</span>
+          <span class="status-pill ${statusClass[t.status] || 'status-pending'}">${statusLabel[t.status] || t.status}</span>
+        </div>
+        <div class="tx-meta">৳${t.amount} · ${t.provider} · ${new Date(t.created_at).toLocaleString('bn-BD')}</div>
+      </div>
+    `).join("");
+  }
+
+  // Auto-login if a session already exists
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) loadDashboard();
+  });
+</script>
+
+</body>
+</html>

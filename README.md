@@ -36,7 +36,18 @@ checkout/
 android/
   SpidPay Agent          -- Android Studio project, the SMS-listener companion app
                              (see android/README.md for build + setup steps)
+dashboard/
+  index.html             -- merchant self-service dashboard (signup/login,
+                             manage numbers, view API keys, test payments,
+                             recent transactions)
 ```
+
+## Merchant dashboard
+
+`dashboard/index.html` uses Supabase Auth (email/password) so merchants can
+sign up without any manual setup — a `merchants` row is created
+automatically via a database trigger on signup. Row Level Security ensures
+each merchant only ever sees their own numbers, API key, and transactions.
 
 ## Security
 

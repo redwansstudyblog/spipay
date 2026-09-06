@@ -10,7 +10,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.button.MaterialButton
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +43,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<MaterialButton>(R.id.btnSave).setOnClickListener { saveSettings() }
         findViewById<MaterialButton>(R.id.btnRequestPermission).setOnClickListener { requestSmsPermission() }
 
+        schedulePeriodicRetry()
         refreshStatus()
+    }
+
+    private fun schedulePeriodicRetry() {
+        val request = PeriodicWorkRequestBuilder<RetryWorker>(15, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "spipay_retry_queue",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 
     private fun saveSettings() {

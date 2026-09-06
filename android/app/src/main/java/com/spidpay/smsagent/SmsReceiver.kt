@@ -5,6 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,6 +18,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * Registered in AndroidManifest.xml with high priority so we see the SMS
@@ -97,16 +103,36 @@ class SmsReceiver : BroadcastReceiver() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e(TAG, "Failed to forward SMS to server", e)
-                // A production version should queue this locally (e.g. a
-                // small Room database) and retry on the next connectivity
-                // change, so a dropped network moment doesn't lose an SMS.
+                Log.e(TAG, "Failed to forward SMS to server, queuing for retry", e)
+                // নেট নেই বা সার্ভারে পৌঁছানো যায়নি — SMS-টা হারায়নি (ফোনের
+                // ইনবক্সে ঠিকই আছে), শুধু forward-টা local queue-তে জমা রাখছি,
+                // নেট ফিরে এলে WorkManager নিজে থেকেই আবার পাঠানোর চেষ্টা করবে।
+                PendingQueue.add(context, payload)
+                scheduleRetry(context)
             }
 
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 Log.d(TAG, "sms-ingest responded: ${response.code}")
+                if (!response.isSuccessful && response.code >= 500) {
+                    // সার্ভার সাময়িকভাবে ডাউন — এটাও retry-এর যোগ্য
+                    PendingQueue.add(context, payload)
+                    scheduleRetry(context)
+                }
                 response.close()
             }
         })
+    }
+
+    private fun scheduleRetry(context: Context) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val request = OneTimeWorkRequestBuilder<RetryWorker>()
+            .setConstraints(constraints)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS)
+            .build()
+
+        WorkManager.getInstance(context).enqueue(request)
     }
 }

@@ -11,8 +11,9 @@
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="SpidPay Agent"
-        android:theme="@style/Theme.SpidPayAgent">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="spipay Agent"
+        android:theme="@style/Theme.SpipayAgent">
 
         <activity
             android:name=".MainActivity"

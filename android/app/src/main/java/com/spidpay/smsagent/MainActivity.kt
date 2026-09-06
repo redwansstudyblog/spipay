@@ -2,14 +2,15 @@ package com.spidpay.smsagent
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputApiKey: EditText
     private lateinit var inputWebhookSecret: EditText
     private lateinit var statusText: TextView
+    private lateinit var statusDot: android.view.View
 
     private val smsPermissionRequestCode = 1001
 
@@ -28,13 +30,14 @@ class MainActivity : AppCompatActivity() {
         inputApiKey = findViewById(R.id.inputApiKey)
         inputWebhookSecret = findViewById(R.id.inputWebhookSecret)
         statusText = findViewById(R.id.statusText)
+        statusDot = findViewById(R.id.statusDot)
 
         inputApiBase.setText(Config.getApiBase(this))
         inputApiKey.setText(Config.getApiKey(this))
         inputWebhookSecret.setText(Config.getWebhookSecret(this))
 
-        findViewById<Button>(R.id.btnSave).setOnClickListener { saveSettings() }
-        findViewById<Button>(R.id.btnRequestPermission).setOnClickListener { requestSmsPermission() }
+        findViewById<MaterialButton>(R.id.btnSave).setOnClickListener { saveSettings() }
+        findViewById<MaterialButton>(R.id.btnRequestPermission).setOnClickListener { requestSmsPermission() }
 
         refreshStatus()
     }
@@ -97,11 +100,15 @@ class MainActivity : AppCompatActivity() {
             this, Manifest.permission.RECEIVE_SMS
         ) == PackageManager.PERMISSION_GRANTED
 
-        statusText.text = when {
-            !Config.isConfigured(this) -> "স্ট্যাটাস: সেটআপ বাকি আছে"
-            !hasPermission -> "স্ট্যাটাস: SMS অনুমতি দরকার"
-            Config.isEnabled(this) -> "স্ট্যাটাস: চালু আছে, SMS শোনা হচ্ছে ✅"
-            else -> "স্ট্যাটাস: বন্ধ আছে"
+        val (label, colorRes) = when {
+            !Config.isConfigured(this) -> "সেটআপ বাকি আছে" to R.color.ink_soft
+            !hasPermission -> "SMS অনুমতি দরকার" to R.color.warn
+            Config.isEnabled(this) -> "চালু আছে, SMS শোনা হচ্ছে" to R.color.accent
+            else -> "বন্ধ আছে" to R.color.danger
         }
+
+        statusText.text = label
+        statusText.setTextColor(ContextCompat.getColor(this, colorRes))
+        (statusDot.background as? GradientDrawable)?.setColor(ContextCompat.getColor(this, colorRes))
     }
 }

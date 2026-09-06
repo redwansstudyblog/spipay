@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/paper"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/spipay_logo"
+            android:contentDescription="spipay logo" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SpidPay Agent"
+            android:text="spipay Agent"
+            android:textColor="@color/ink"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -21,75 +31,139 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp"
-            android:text="এই ফোনে আসা mobile banking SMS পড়ে আপনার SpidPay ব্যাকএন্ডে পাঠায়"
-            android:textColor="#667074" />
+            android:layout_marginBottom="20dp"
+            android:text="এই ফোনে আসা mobile banking SMS পড়ে আপনার spipay ব্যাকএন্ডে পাঠায়"
+            android:textColor="@color/ink_soft"
+            android:textSize="13.5sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="API Base URL"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/inputApiBase"
+        <!-- Status card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/SpipayCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="https://your-project.supabase.co/functions/v1"
-            android:inputType="textUri" />
+            android:layout_marginBottom="14dp"
+            app:strokeColor="@color/accent"
+            app:cardBackgroundColor="@color/accent_soft">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <View
+                    android:id="@+id/statusDot"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/status_dot" />
+                <TextView
+                    android:id="@+id/statusText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/accent"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Merchant API Key"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/inputApiKey"
+        <!-- Setup card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/SpipayCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="merchants.api_key" />
+            android:layout_marginBottom="14dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Webhook Secret"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/inputWebhookSecret"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="সেটআপ"
+                    android:textColor="@color/ink"
+                    android:textStyle="bold"
+                    android:textSize="15sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpipayInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="API Base URL">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputApiBase"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textUri" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpipayInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Merchant API Key">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputApiKey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpipayInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Webhook Secret"
+                    app:passwordToggleEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputWebhookSecret"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    style="@style/SpipayButton.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="সেভ করুন" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRequestPermission"
+                    style="@style/SpipayButton.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SMS পড়ার অনুমতি দিন" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Warning card -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/SpipayCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="merchants.webhook_secret"
-            android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="সেভ করুন" />
-
-        <Button
-            android:id="@+id/btnRequestPermission"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="SMS পড়ার অনুমতি দিন" />
-
-        <TextView
-            android:id="@+id/statusText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="⚠️ এই ফোন/সিম শুধু পেমেন্ট SMS receive করার জন্য আলাদা রাখা ভালো, ব্যক্তিগত ব্যবহারের ফোনে না রাখাই নিরাপদ।"
-            android:textColor="#B3413B"
-            android:textSize="13sp" />
+            app:cardBackgroundColor="@color/warn_soft"
+            app:strokeColor="@color/warn_soft">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="10dp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="এই ফোন/সিম শুধু পেমেন্ট SMS receive করার জন্য আলাদা রাখা ভালো, ব্যক্তিগত ব্যবহারের ফোনে না রাখাই নিরাপদ।"
+                    android:textColor="@color/warn"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

@@ -16,6 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import bkashLogo from "@/assets/providers/bkash.png";
+import nagadLogo from "@/assets/providers/nagad.png";
+import rocketLogo from "@/assets/providers/rocket.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,9 +63,9 @@ type Provider = {
 };
 
 const providers: Provider[] = [
-  { id: "bkash", name: "বিকাশ", short: "bKash", color: "#E2136E", number: "01712 345 678" },
-  { id: "nagad", name: "নগদ", short: "Nagad", color: "#F7941D", number: "01812 345 678" },
-  { id: "rocket", name: "রকেট", short: "Rocket", color: "#8C3494", number: "01912 345 678" },
+  { id: "bkash", name: "বিকাশ", short: "bKash", color: "#E2136E", number: "01712 345 678", logoUrl: bkashLogo },
+  { id: "nagad", name: "নগদ", short: "Nagad", color: "#F7941D", number: "01812 345 678", logoUrl: nagadLogo },
+  { id: "rocket", name: "রকেট", short: "Rocket", color: "#8C3494", number: "01912 345 678", logoUrl: rocketLogo },
 ];
 
 type Step = "select" | "pay";

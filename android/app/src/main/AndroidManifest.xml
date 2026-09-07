@@ -24,6 +24,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".wizard.WizardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SpipayAgent" />
+
         <!-- Priority is high so we see the SMS before the default messaging
              app finishes processing it. This does NOT abort the broadcast,
              so the user's normal SMS app still receives it as usual. -->

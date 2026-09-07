@@ -66,6 +66,10 @@ class SmsReceiver : BroadcastReceiver() {
                 Log.d(TAG, "Ignoring SMS from unrecognized sender: $sender")
                 continue
             }
+            if (!Config.isProviderEnabled(context, matchedProvider)) {
+                Log.d(TAG, "Channel disabled for $matchedProvider, ignoring")
+                continue
+            }
 
             forwardToServer(context, matchedProvider, sender, body)
         }

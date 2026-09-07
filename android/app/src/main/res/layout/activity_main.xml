@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/paper"
+    android:background="@color/bg_deep"
     android:fillViewport="true">
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="spipay Agent"
-            android:textColor="@color/ink"
+            android:textColor="@color/text_primary"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -33,7 +33,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="20dp"
             android:text="এই ফোনে আসা mobile banking SMS পড়ে আপনার spipay ব্যাকএন্ডে পাঠায়"
-            android:textColor="@color/ink_soft"
+            android:textColor="@color/text_secondary"
             android:textSize="13.5sp" />
 
         <!-- Status card -->
@@ -42,8 +42,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="14dp"
-            app:strokeColor="@color/accent"
-            app:cardBackgroundColor="@color/accent_soft">
+            app:strokeColor="@color/success"
+            app:cardBackgroundColor="@color/success_soft">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/accent"
+                    android:textColor="@color/success"
                     android:textStyle="bold"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -81,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="সেটআপ"
-                    android:textColor="@color/ink"
+                    android:textColor="@color/text_primary"
                     android:textStyle="bold"
                     android:textSize="15sp" />
 
@@ -143,8 +143,8 @@
             style="@style/SpipayCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/warn_soft"
-            app:strokeColor="@color/warn_soft">
+            app:cardBackgroundColor="@color/pending_soft"
+            app:strokeColor="@color/pending_soft">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="এই ফোন/সিম শুধু পেমেন্ট SMS receive করার জন্য আলাদা রাখা ভালো, ব্যক্তিগত ব্যবহারের ফোনে না রাখাই নিরাপদ।"
-                    android:textColor="@color/warn"
+                    android:textColor="@color/pending"
                     android:textSize="13sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

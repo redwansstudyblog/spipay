@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="paper">#FAFAF8</color>
-    <color name="card">#FFFFFF</color>
-    <color name="ink">#11181B</color>
-    <color name="ink_soft">#667074</color>
-    <color name="line">#E7E5DF</color>
-    <color name="accent">#0F6E5C</color>
-    <color name="accent_soft">#E4F0EC</color>
-    <color name="danger">#B3413B</color>
-    <color name="danger_soft">#F7EAE9</color>
-    <color name="warn">#B3781F</color>
-    <color name="warn_soft">#FBF1E1</color>
+    <!-- Premium Dark Fintech palette -->
+    <color name="bg_deep">#050B1A</color>
+    <color name="bg_surface">#0B1530</color>
+    <color name="bg_card">#101B3D</color>
+    <color name="line">#1E2A4E</color>
+
+    <color name="text_primary">#F2F5FC</color>
+    <color name="text_secondary">#8B96B8</color>
+    <color name="text_muted">#5C6790</color>
+
+    <color name="electric_blue">#3B6CFF</color>
+    <color name="cyan">#22D3EE</color>
+    <color name="purple">#8B5CF6</color>
+
+    <color name="success">#22C55E</color>
+    <color name="success_soft">#12241C</color>
+    <color name="pending">#F59E0B</color>
+    <color name="pending_soft">#2A2013</color>
+    <color name="failed">#EF4444</color>
+    <color name="failed_soft">#2A1414</color>
+    <color name="info">#3B82F6</color>
+
+    <!-- Provider brand colors -->
+    <color name="bkash">#E2136E</color>
+    <color name="nagad">#F7941D</color>
+    <color name="rocket">#8C3494</color>
+    <color name="upay">#00A651</color>
 </resources>

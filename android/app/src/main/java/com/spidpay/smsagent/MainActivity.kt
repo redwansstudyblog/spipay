@@ -1,6 +1,7 @@
 package com.spidpay.smsagent
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -28,6 +29,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!Config.isSetupComplete(this)) {
+            startActivity(Intent(this, com.spidpay.smsagent.wizard.WizardActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
         inputApiBase = findViewById(R.id.inputApiBase)
@@ -115,10 +123,10 @@ class MainActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
 
         val (label, colorRes) = when {
-            !Config.isConfigured(this) -> "সেটআপ বাকি আছে" to R.color.ink_soft
-            !hasPermission -> "SMS অনুমতি দরকার" to R.color.warn
-            Config.isEnabled(this) -> "চালু আছে, SMS শোনা হচ্ছে" to R.color.accent
-            else -> "বন্ধ আছে" to R.color.danger
+            !Config.isConfigured(this) -> "সেটআপ বাকি আছে" to R.color.text_secondary
+            !hasPermission -> "SMS অনুমতি দরকার" to R.color.pending
+            Config.isEnabled(this) -> "চালু আছে, SMS শোনা হচ্ছে" to R.color.success
+            else -> "বন্ধ আছে" to R.color.failed
         }
 
         statusText.text = label

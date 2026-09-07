@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_deep"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/dotsRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="18dp"
+        android:paddingBottom="6dp" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/wizardPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:userInputEnabled="false" />
+
+</LinearLayout>

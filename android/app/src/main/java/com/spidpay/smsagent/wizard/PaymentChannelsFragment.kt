@@ -29,7 +29,7 @@ class PaymentChannelsFragment : Fragment(R.layout.fragment_payment_channels) {
         displayChannels.forEach { channel ->
             val row = inflater.inflate(R.layout.item_channel_toggle, container, false)
             row.findViewById<TextView>(R.id.channelName).text = channel.label
-            row.findViewById<View>(R.id.colorDot).background.setTint(resources.getColor(channel.colorRes, null))
+            row.findViewById<View>(R.id.colorDot).background?.setTint(resources.getColor(channel.colorRes, null))
             val switchView = row.findViewById<SwitchMaterial>(R.id.channelSwitch)
             switchView.isChecked = Config.isProviderEnabled(requireContext(), channel.id)
             switchView.setOnCheckedChangeListener { _, checked ->

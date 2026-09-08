@@ -25,10 +25,6 @@ async function hmacHex(secret: string, message: string) {
   return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// NOTE: these sender-id allowlists are best-effort starting points.
-// Each one should be confirmed against a real SMS from that provider
-// before relying on it for actual verification — sender names/short
-// codes can vary or change over time.
 const OFFICIAL_SENDERS: Record<string, string[]> = {
   bkash: ["bkash", "16247"],
   nagad: ["nagad", "16167"],
@@ -42,7 +38,7 @@ const OFFICIAL_SENDERS: Record<string, string[]> = {
   meghnapay: ["meghna"],
 };
 
-function parseSms(raw: string) {
+function parseSmsRegex(raw: string) {
   const amountMatch = raw.match(/Tk\s?\.?\s?([\d,]+\.?\d*)/i);
   const trxMatch = raw.match(/TrxID[:\s]+([A-Za-z0-9]+)/i);
   const senderMatch = raw.match(/from\s+(\d{7,11})/i);
@@ -50,6 +46,74 @@ function parseSms(raw: string) {
     amount: amountMatch ? parseFloat(amountMatch[1].replace(/,/g, "")) : null,
     trxid: trxMatch ? trxMatch[1].toUpperCase() : null,
     senderLast4: senderMatch ? senderMatch[1].slice(-4) : null,
+  };
+}
+
+// Fallback parser used only when regex can't confidently extract the
+// fields — handles SMS formats we haven't hand-written a pattern for yet.
+// IMPORTANT: this only ever fills in *extraction* (what does the text say),
+// never the verification decision itself — the actual match against a
+// pending payment_request (amount + trxid + provider, all equal) still
+// happens with plain deterministic code after this, same as always.
+async function parseWithGemini(raw: string): Promise<{ amount: number | null; trxid: string | null; senderLast4: string | null }> {
+  const apiKey = Deno.env.get("GEMINI_API_KEY");
+  if (!apiKey) return { amount: null, trxid: null, senderLast4: null };
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text:
+                    "Extract fields from this Bangladeshi mobile banking SMS. " +
+                    "Return ONLY compact JSON, no prose, in this exact shape: " +
+                    '{"amount": number or null, "trxid": string or null, "sender_last4": string or null}. ' +
+                    "amount is the taka amount received (as a plain number, no currency symbol or commas). " +
+                    "trxid is the transaction/reference ID. sender_last4 is the last 4 digits of the sender's phone number if present. " +
+                    "If a field isn't present in the SMS, use null for it.\n\nSMS:\n" +
+                    raw,
+                },
+              ],
+            },
+          ],
+          generationConfig: { responseMimeType: "application/json", temperature: 0 },
+        }),
+      }
+    );
+
+    if (!res.ok) return { amount: null, trxid: null, senderLast4: null };
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) return { amount: null, trxid: null, senderLast4: null };
+
+    const parsed = JSON.parse(text);
+    return {
+      amount: typeof parsed.amount === "number" ? parsed.amount : null,
+      trxid: typeof parsed.trxid === "string" ? parsed.trxid.toUpperCase() : null,
+      senderLast4: typeof parsed.sender_last4 === "string" ? parsed.sender_last4 : null,
+    };
+  } catch (_e) {
+    return { amount: null, trxid: null, senderLast4: null };
+  }
+}
+
+async function parseSms(raw: string) {
+  const regexResult = parseSmsRegex(raw);
+  if (regexResult.amount !== null && regexResult.trxid !== null) {
+    return { ...regexResult, source: "regex" as const };
+  }
+  const aiResult = await parseWithGemini(raw);
+  return {
+    amount: regexResult.amount ?? aiResult.amount,
+    trxid: regexResult.trxid ?? aiResult.trxid,
+    senderLast4: regexResult.senderLast4 ?? aiResult.senderLast4,
+    source: "regex+ai_fallback" as const,
   };
 }
 
@@ -80,7 +144,7 @@ Deno.serve(async (req: Request) => {
   const senderId = String(body.sender_id).toLowerCase();
   const isOfficial = (OFFICIAL_SENDERS[provider] || []).some((s) => senderId.includes(s));
 
-  const parsed = parseSms(body.raw_text);
+  const parsed = await parseSms(body.raw_text);
 
   const { data: smsRow, error: smsErr } = await supabase
     .from("sms_events")
@@ -101,7 +165,7 @@ Deno.serve(async (req: Request) => {
   if (smsErr) return json({ error: smsErr.message }, 500);
 
   if (!isOfficial || !parsed.trxid) {
-    return json({ stored: true, matched: false, reason: !isOfficial ? "sender_rejected" : "unparsed" });
+    return json({ stored: true, matched: false, reason: !isOfficial ? "sender_rejected" : "unparsed", parse_source: parsed.source });
   }
 
   const { data: pr } = await supabase
@@ -116,7 +180,7 @@ Deno.serve(async (req: Request) => {
     .maybeSingle();
 
   if (!pr) {
-    return json({ stored: true, matched: false, reason: "no_pending_request" });
+    return json({ stored: true, matched: false, reason: "no_pending_request", parse_source: parsed.source });
   }
 
   await supabase
@@ -130,6 +194,7 @@ Deno.serve(async (req: Request) => {
     payment_request_id: pr.id,
     sms_event_id: smsRow.id,
     outcome: "verified",
+    detail: `parsed via ${parsed.source}`,
   });
 
   if (merchant.webhook_url) {
@@ -161,5 +226,5 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  return json({ stored: true, matched: true, payment_request_id: pr.id });
+  return json({ stored: true, matched: true, payment_request_id: pr.id, parse_source: parsed.source });
 });

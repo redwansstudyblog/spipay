@@ -8,6 +8,9 @@ on:
       - '.github/workflows/build-android.yml'
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,7 +35,21 @@ jobs:
         run: gradle wrapper --gradle-version 8.7
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee build_log.txt
+
+      - name: Save log on failure
+        if: failure()
+        run: |
+          mkdir -p ../.github/ci-logs
+          cp build_log.txt ../.github/ci-logs/last-build-log.txt
+          cd ..
+          git config user.email "ci@spipay.local"
+          git config user.name "spipay-ci"
+          git add .github/ci-logs/last-build-log.txt
+          git commit -m "ci: save failed build log [skip ci]" || echo "nothing to commit"
+          git push
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
